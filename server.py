@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import os
 import sys
 import webbrowser
@@ -12,8 +13,8 @@ second_folder = sys.argv[2]
 first_files = os.listdir(first_folder)
 second_files = os.listdir(second_folder)
 
-first_files = [os.path.join(first_folder, img_name) for img_name in first_files]
-second_files = [os.path.join(second_folder, img_name) for img_name in second_files]
+first_files = [os.path.join(os.getcwd(), first_folder, img_name) for img_name in first_files]
+second_files = [os.path.join(os.getcwd(), second_folder, img_name) for img_name in second_files]
 
 first_files.sort()
 second_files.sort()

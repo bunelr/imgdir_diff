@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import os
 import sys
+import hashlib
 import webbrowser
 from flask import Flask, render_template, send_file
 app = Flask(__name__)
@@ -71,9 +72,17 @@ def img_comp(img_id):
     index = int(img_id)
     file_1 = first_files[index]
     file_2 = second_files[index]
+    hasher1 = hashlib.md5()
+    with open(file_1, 'rb') as f1:
+        hasher1.update(f1.read())
+    hasher2 = hashlib.md5()
+    with open(file_2, 'rb') as f2:
+        hasher2.update(f2.read())
     return render_template('image_diff.html',
                            file_1=file_1,
                            file_2=file_2,
+                           hash_1=hasher1.hexdigest(),
+                           hash_2=hasher2.hexdigest(),
                            index=index)
 
 

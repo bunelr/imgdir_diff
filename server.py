@@ -2,26 +2,41 @@
 import os
 import sys
 import webbrowser
+from flask import Flask, render_template, send_file
+
+app = Flask(__name__)
+
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.CRITICAL)
 
 webbrowser.get("/usr/bin/chromium-browser %s").open_new("http://localhost:8000")
 
-from flask import Flask, render_template, send_file
+img_suffixes = [".bmp", ".png", ".jpg", ".jpeg"]
+
+
+def build_list_of_images(folder_path):
+    full_paths = []
+    files = os.listdir(folder_path)
+    for f in files:
+        base, extension = os.path.splitext(f)
+        if extension in img_suffixes:
+            path = os.path.join(os.getcwd(), folder_path, f)
+            full_paths.append(path)
+    full_paths.sort()
+    return full_paths
 
 first_folder = sys.argv[1]
 second_folder = sys.argv[2]
 
-first_files = os.listdir(first_folder)
-second_files = os.listdir(second_folder)
+first_files = build_list_of_images(first_folder)
+second_files = build_list_of_images(second_folder)
 
-first_files = [os.path.join(os.getcwd(), first_folder, img_name) for img_name in first_files]
-second_files = [os.path.join(os.getcwd(), second_folder, img_name) for img_name in second_files]
+@app.route('/favicon.ico')
+def favicon():
+    return ''
 
-first_files.sort()
-second_files.sort()
-
-app = Flask(__name__)
-
-@app.route('/<img_id>')
+@app.route('/img/<img_id>')
 def img_comp(img_id):
     index = int(img_id)
     file_1 = first_files[index]
@@ -38,4 +53,4 @@ def index():
 def serve_images(path):
     return send_file('/' + path, mimetype='image/x-windows-bmp')
 
-app.run(debug = True, port= 8000)
+app.run(port= 8000)
